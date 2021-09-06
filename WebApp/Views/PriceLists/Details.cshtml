@@ -1,0 +1,92 @@
+﻿@model WebApp.Database.Entity.PriceList
+
+@{
+    ViewData["Title"] = "Просмотр";
+}
+
+<div>
+
+
+    <h4>@Html.DisplayFor(model => model.Title)</h4>
+    <br />
+    <div>
+        <a asp-action="Create" asp-controller="Product" asp-route-id="@Model.Id" class="btn btn-success">Добавить продукт</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редактировать прайс-лист</a>
+        <a asp-action="Index" class="btn btn-primary">Вернуться в список прайс-листов</a>
+    </div>
+    <br />
+    <div class="table-responsive-md">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Название
+                        товара
+                    </th>
+                    <th>
+                        Код
+                        товара
+                    </th>
+                    @foreach (var col in Model.Columns)
+                    {
+                        <th>
+                            @col.Titile
+                        </th>
+                    }
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var prod in Model.Products)
+                {
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.Title</a>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.VendorCode</a>
+                    </td>
+                    @foreach (var val in prod.Values)
+                    {
+                        <td>
+                            @val.ValueName
+                        </td>
+                    }
+                <td>
+
+                    <a asp-action="Edit" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-primary">Редактировать</a>
+                    @using (Html.BeginForm("Delete", "Product", new { id = prod.Id }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="delete" />
+                    }
+                    @*<a asp-action="Delete" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-danger">Удалить</a>*@
+
+                </td>
+                </tr>
+                  
+                }
+
+            </tbody>
+        </table>
+    </div>
+   
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+
+        $('form').submit(function () {
+            // Modify the following to use you jquery-ui-dialog, but for testing purposes
+            if (!confirm("Are you sure want to delete record") {
+                return false; // cancel the submit if the user clicked the Cancel button
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

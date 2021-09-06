@@ -1,0 +1,77 @@
+﻿@model WebApp.Models.ProductModel
+
+@{
+    ViewData["Title"] = "Редактирование продукта";
+}
+
+<h1>Редактирование Продукта</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PriceListId" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VendorCode" class="control-label"></label>
+                <input asp-for="VendorCode" class="form-control" />
+                <span asp-validation-for="VendorCode" class="text-danger"></span>
+            </div>
+            <table class="table table-striped">
+                @for (int i = 0; i < Model.Columns.Count; i++)
+                {
+
+
+                    <tr>
+                        <td>
+                            <input hidden asp-for="Values[i].ColumnId" class="form-control" />
+                        </td>
+                        <td>
+                            <label class="control-label">@Model.Columns[i].Titile</label>
+                        </td>
+                        <td>
+                            @if (Model.Columns[i].TypeId == WebApp.Database.Entity.ColumnTypeEnum.Area)
+                            {
+                                <textarea asp-for="Values[i].ValueName" class="form-control"></textarea>
+                            }
+                            else if (Model.Columns[i].TypeId == WebApp.Database.Entity.ColumnTypeEnum.DateTime)
+                            {
+                                <input asp-for="Values[i].ValueName" type="datetime-local" data-val="true" class="form-control" />
+                            }
+                            else if (Model.Columns[i].TypeId == WebApp.Database.Entity.ColumnTypeEnum.Boolean)
+                            {
+                                <input asp-for="Values[i].ValueName" type="checkbox" class="form-control" />
+                            }
+                            else if (Model.Columns[i].TypeId == WebApp.Database.Entity.ColumnTypeEnum.Int)
+                            {
+                                <input asp-for="Values[i].ValueName" type="number" class="form-control" />
+                            }
+                            else
+                            {
+                                <input asp-for="Values[i].ValueName" class="form-control" />
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

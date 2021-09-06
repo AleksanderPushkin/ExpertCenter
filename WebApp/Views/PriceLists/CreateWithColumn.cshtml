@@ -1,0 +1,110 @@
+﻿@model WebApp.Models.CreatePriceListWithColumn
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>PriceList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+
+        <form asp-action="CreateWithColumn">
+            <div class="form-group">
+                <input type="submit" value="Создать" class="btn btn-primary" />
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+
+                <div>
+                    <table id="columnsTable">
+
+                        <tr id="tablerow0">
+                            <td>
+                                <div class="editor-field">
+                                    <label class="text-box single-line" name="1" type="text" value="" >Колонка 0</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    <input class="text-box single-line" name="Id[0]" type="text" value="" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    <input class="text-box single-line" name="Title[0]" type="text" value="" required="required" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    <select class="text-box single-line" data-val="true" data-val-required="The TypeId field is required." id="TypeId" name="TypeId[0]">
+                                        <option value="0">Text</option>
+                                        <option value="1">Area</option>
+                                        <option value="2">DateTime</option>
+                                        <option value="3">Int</option>
+                                        <option value="4">Boolean</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" onclick="removeTr(0);">Delete</button>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                    </table>
+                    <button id="addRow" class="btn btn-primary">Add Row</button>
+                </div>
+            </div>
+
+              
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+
+@section Scripts {
+
+ <script type="text/javascript">
+    var counter = 1;
+
+    $(function () {
+    $("#addRow").click(function () {
+        $("<tr id='tablerow" + counter + "'><td><label class='text-box single-line' name='"+counter+" type='text' >Колонка "+counter+"</label></td><td><input type='text' class='text-box single-line' name='Id[" + counter + "]' value=''  />" +
+            "</td><td>" +
+            "<input type='text' class='text-box single-line' name='Title[" + counter + "]' value='' required='required' /></td><td>" +
+            "<select class='form-control text-box single-line' data-val='true' data-val-required='The TypeId field is required.' id='TypeId' name='TypeId["+counter+"]'>" +
+            "<option value='0'>Text</option>"+
+            "<option value='1'>Area</option>" +
+            "<option value='2'>DateTime</option>" +
+            "<option value='3'>Int</option>" +
+            "<option value='4'>Boolean</option>" +
+            "</select></td ><td>" +
+
+            "<button type='button' class='btn btn-primary' onclick='removeTr(" + counter + ");'>Delete</button></td></tr>").appendTo("#columnsTable");
+    counter++;
+    return false;
+    });
+    });
+    function removeTr(index) {
+    if (counter > 1) {
+    $("#tablerow" + index).remove();
+    counter--;
+    }
+    return false;
+    }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

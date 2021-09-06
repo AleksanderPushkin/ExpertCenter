@@ -1,0 +1,166 @@
+﻿@model WebApp.Models.PriceListModel
+@using WebApp.Database.Entity
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>PriceList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div>
+                <table id="columnsTable">
+                    @for (int i = 0; i < Model.Columns.Count; i++)
+                    {
+                        <tr id="@("tablerow"+i)">
+                            <td>
+                                <input asp-for="@Model.Columns[i].Id" hidden class="form-control" />
+                            </td>
+                            <td>
+                                <input asp-for="@Model.Columns[i].Titile" class="form-control" />
+                                <span asp-validation-for="@Model.Columns[i].Titile" class="text-danger"></span>
+                            </td>
+                            <td>
+
+                                <select asp-for="@Model.Columns[i].TypeId" asp-items="Html.GetEnumSelectList<ColumnTypeEnum>()" class="form-control"></select>
+                                <span asp-validation-for="@Model.Columns[i].TypeId" class="text-danger"></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="removeTr(@i);">Delete</button>
+                            </td>
+                        </tr>
+                    }
+
+
+                </table>
+            </div>
+            <div>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle btn-primary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Добавить колонку
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a id="addRow" class="dropdown-item">Добавить новую колонку</a>
+                        <a class="dropdown-item" data-toggle="modal" data-target="#exampleModal">
+                            Выбрать существующую
+                        </a>
+                    </div>
+                    <div id="update"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<style>
+    .ui-autocomplete {
+        z-index: 1050;
+    }
+</style>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="selectColumn" type="text"  class="form-control"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="addColumn">Добавить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        var counter = @Model.Columns.Count;
+
+    $(function () {
+    $("#addRow").click(function () {
+        $("<tr><td> <input hidden='' class='form-control' type='number' data-val='true' data-val-required='The Id field is required.' id='Columns_"+counter+"__Id' name='Columns["+counter+"].Id' value='0'> "
+         + "</td><td><input class='form-control' type='text' id='Columns_"+counter+"__Titile' name='Columns["+counter+"].Titile' value=''>"
+         +  "<span class='text-danger field-validation-valid' data-valmsg-for='Columns["+counter+"].Titile' data-valmsg-replace='true'></span>"
+         + " </td> <td><select class='form-control' data-val='true' data-val-required='The TypeId field is required.' id='Columns_"+counter+"__TypeId' name='Columns["+counter+"].TypeId'><option value='0'>Text</option>"
+         + "<option value='1'>Area</option><option value='2'>DateTime</option><option value='3'>Int</option><option value='4'>Boolean</option></select>"
+         +   "<span class='text-danger field-validation-valid' data-valmsg-for='Columns["+counter+"].TypeId' data-valmsg-replace='true'></span></td><td> "
+         +  "<button type='button' class='btn btn-primary' onclick='removeTr(" + counter + ");'>Delete</button></td></tr>").appendTo("#columnsTable");
+    counter++;
+    return false;
+    });
+    });
+    function removeTr(index) {
+    if (counter > 1) {
+    $("#tablerow" + index).remove();
+   // counter--;
+    }
+    return false;
+        }
+
+        $(function () {
+
+
+            $("#selectColumn").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Columns/Search",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response($.map(data, function (value, key) {
+                                return {
+                                    label: value.titile,
+                                    value: value.id
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+
+                }
+            });
+
+            $("#addColumn").click(function (e) {
+                e.preventDefault();
+                var nameGoal = $("#selectColumn").val();
+                //we update our view here now
+                $("#update").html("name goal: <b>" + nameGoal + "</b>");
+                $("#exampleModal").modal('hide');//close our modal now
+            });
+
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
