@@ -42,51 +42,40 @@
 
                 @foreach (var prod in Model.Products)
                 {
-                <tr>
-                    <td>
-                        <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.Title</a>
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.VendorCode</a>
-                    </td>
-                    @foreach (var val in prod.Values)
-                    {
+                    <tr>
                         <td>
-                            @val.ValueName
+                            <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.Title</a>
                         </td>
-                    }
-                <td>
+                        <td>
+                            <a asp-action="Details" asp-controller="Product" asp-route-id="@prod.Id">@prod.VendorCode</a>
+                        </td>
+                        @foreach (var val in prod.Values)
+                        {
+                            <td>
+                                @val.ValueName
+                            </td>
+                        }
+                    <td>
 
-                    <a asp-action="Edit" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-primary">Редактировать</a>
-                    @using (Html.BeginForm("Delete", "Product", new { id = prod.Id }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <input type="submit" value="delete" />
-                    }
-                    @*<a asp-action="Delete" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-danger">Удалить</a>*@
+                        <a asp-action="Edit" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-primary">Редактировать</a>
+                        
+                        @*<a asp-action="Delete" asp-route-id="@prod.Id" asp-controller="Product" class="btn btn-danger">Удалить</a>*@
 
-                </td>
-                </tr>
-                  
+                    </td>
+                    </tr>
+
                 }
 
             </tbody>
         </table>
     </div>
-   
+
 </div>
 
 @section Scripts {
 
-    <script type="text/javascript">
-
-
-        $('form').submit(function () {
-            // Modify the following to use you jquery-ui-dialog, but for testing purposes
-            if (!confirm("Are you sure want to delete record") {
-                return false; // cancel the submit if the user clicked the Cancel button
-            }
-        });
+        <script type="text/javascript">
+   
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
